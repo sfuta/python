@@ -9,16 +9,15 @@ import time
 import subprocess
 import multiprocessing as multi
 
-if __name__ == '__main__':
-
-    if len(sys.argv) < 2:
+def main(argv):
+    if len(argv) < 2:
         print 'Usage: [command [argv]]'
         exit(1)
 
     def call_process():
         """ コマンドに設定したプロセスを実行
         """
-        subprocess.call(sys.argv[1:])
+        subprocess.call(argv[1:])
 
     while True:
         # 最大10回子プロセス起動
@@ -30,3 +29,6 @@ if __name__ == '__main__':
 
         # 1秒毎にプロセス数確認
         time.sleep(1)
+
+if __name__ == '__main__':
+    main(sys.argv)
