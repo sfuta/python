@@ -3,6 +3,9 @@
 """
 Db操作用クラス
 with構文対応
+※実装参考
+https://qiita.com/hoto17296/items/0cfe7cdd3c47b69cc892
+https://dev.classmethod.jp/server-side/python/query-with-mysql-connector-python/
 """
 import json
 import mysql.connector
@@ -28,10 +31,6 @@ class DbManager(object):
 
         :param name: string 接続先名称
         :return 接続オブジェクト
-        """
-
-    def close(self):
-        """ DB接続を終了
         """
 
     def selectAll(self, sql, params=None):
