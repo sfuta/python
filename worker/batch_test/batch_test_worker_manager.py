@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from worker.base.base_worker_manager import BaseWorkerManager
+
 """
 Worker管理クラス
 """
-def aaa():
-    print "aaa"
 
-class BatchTestWorkerManager(object):
+class BatchTestWorkerManager(BaseWorkerManager):
 
     def __init__(self):
         """ 利用クラスのインスタンス化等
