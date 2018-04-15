@@ -4,7 +4,7 @@
 worker基底クラス
 """
 
-class BaseWorker(object):
+class Worker(object):
 
     def __init__(self):
         """ 利用クラスのインスタンス化等
