@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-worker基底クラス
+worker管理基底クラス
 """
 
-class Worker(object):
+class GetFeedContentWorkerManager(object):
 
     def __init__(self):
         """ 利用クラスのインスタンス化等
         """
-        self.processes = processes
 
     def before(self):
         """ 開始処理を記載
