@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -B
 # -*- coding: utf-8 -*-
 
 import re
@@ -7,6 +7,7 @@ import sys
 """ queue_worker系実行スクリプト
 """
 def main(argv):
+
     # クラスのメタ情報取得
     task_name   = argv[1]
     class_name  = task_name + "QueueWorker"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from worker.queue_worker import QueueWorker
+from queue_worker import QueueWorker
 import time
 import os
 
