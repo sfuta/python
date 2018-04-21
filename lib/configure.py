@@ -17,7 +17,7 @@ class Configure(object):
         """
         # 設定ファイル内容をマージする
         with open(path) as file:
-            cls.__config_dict.update(yaml.load(file))
+            Configure.__config_dict.update(yaml.load(file))
 
     @staticmethod
     def get(key):
@@ -31,4 +31,4 @@ class Configure(object):
                 return __get(_k, _v)
             return v[k]
 
-        return __get(key, cls.__config_dict)
+        return __get(key, Configure.__config_dict)
