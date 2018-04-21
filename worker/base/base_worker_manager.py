@@ -60,7 +60,7 @@ class BaseWorkerManager(object):
             raise ValueError("queue message is over limit. size:" + len(message))
 
         # workerにメッセージ(最大256KB)を渡して実行
-        p = subprocess.Popen(self.cmd, stdin=subprocess.PIPE)
+        p = subprocess.Popen(self.worker_cmd, stdin=subprocess.PIPE)
         p.communicate(input=message)
         p.wait()
 
