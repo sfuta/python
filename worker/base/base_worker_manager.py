@@ -10,8 +10,6 @@ class BaseWorkerManager(object):
     def __init__(self):
         """ 利用クラスのインスタンス化等
         """
-        # 利用キュー名
-        self.queue_name = "deafult_queue"
         # 実行コマンド
         self.worker_cmd = ("python", "default_worker")
         # 試行回数
@@ -25,12 +23,18 @@ class BaseWorkerManager(object):
         """ 完了後処理を記載(DB更新/ロギング等)
         """
 
-    def main(self):
+    def pop_queue():
+        """ キューからデータを取り出し、渡す
+        """
+        return None
+
+
+    def run(self):
         """ メイン取得処理を実行
         :param retry_count int 試行回数
         """
-        # キューからタスクパラメータを取得
-        message = sqs_client.pop(self.queue_name, is_encode=false)
+        # キューからパラメータ取得
+        message = self.pop_queue()
 
         # 開始前処理を実行
         self.ready()
@@ -40,8 +44,7 @@ class BaseWorkerManager(object):
             if self.call_worker(message):
                 # 成功時は処理を抜ける
                 break;
-
-            # 1秒経過後に再実行
+            # 次の実行まで1秒,waitする
             sleep(1)
 
         # 終了処理を実行
