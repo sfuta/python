@@ -2,85 +2,106 @@
 
 """
 Db操作用クラス
-with構文対応
 ※実装参考
-https://qiita.com/hoto17296/items/0cfe7cdd3c47b69cc892
-https://dev.classmethod.jp/server-side/python/query-with-mysql-connector-python/
+https://dev.mysql.com/doc/connector-python/en/connector-python-reference.html
 """
-import json
 import mysql.connector
+from lib.configure import Configure
 
 class DbManager(object):
 
     def __init__(self):
-        """ DB接続情報の読み込みを実行
         """
-        self.processes = processes
-
-    def __enter__(self):
-        """ DB接続open処理
-        """
-        return self
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        """ DB接続close処理
         """
 
-    def connect(self, name):
+    def connect(self, name='default', option={}):
         """ DB接続を実行
-
-        :param name: string 接続先名称
+        :param name:   string 接続名(default: 'default')
+        :param option: dict   接続オプション(default:{})
         :return 接続オブジェクト
         """
-
-    def selectAll(self, sql, params=None):
-        """ DB select sqlを実行し、全結果を返す
-
-        :param sql: string 実行SQL文
-        :param params: tuple 実行SQL文のパラメータ値(default:None)
-        :return tuple SQL実行結果
-        """
-
-        return None
-
-    def selectOne(self, sql, params=None):
-        """ DB select sqlを実行し、一行目を返す
-
-        :param sql: string 実行SQL文
-        :param params: tuple 実行SQL文のパラメータ値(default:None)
-        :return tuple SQL実行結果
-        """
-
-        return None
-
-    def execuete(self, sql, params=None):
-        """ DB insert/update/delete sqlを実行し、実行成功可否を返す
-
-        :param sql: string 実行SQL文
-        :param params: tuple 実行SQL文のパラメータ値(default:None)
-        :return boolean SQL実行結果
-        """
-
-        return None
-
-    def begin(self):
-        """ DB トランザクション開始
-        """
-
-    def rollback(self):
-        """ DB ロールバック
-        """
-
-    def commit(self):
-        """ DB コミット
-        """
-
-    def __query(self, sql):
-        """ DB sqlを実行
-
-        :param sql: 実行SQL文
-        """
+        config = Configure.get('db.%s' % name)
+        config.update(option)
+        self.__connect = mysql.connector.connect(**config)
+        return self
 
     def close(self):
         """ DB 接続を閉じる
         """
+        self.cursor_close()
+        self.__connect.close()
+
+    def get_cursor(self):
+        """ カーソルを取得(ないときは新たに作成)
+        """
+        if self.__cursor is None:
+            self.__cursor = self.__connect.cursor(prepared=True)
+        return self.__cursor
+
+    def cursor_close(self):
+        """ カーソルを閉じる
+        """
+        if not self.__cursor is None:
+            self.__cursor.close()
+        self.__cursor = None
+
+    def select_all(self, sql, params=None, is_cursor_close=True):
+        """ DB select sqlを実行し、全結果を返す
+        @NOTE 変数にすべて取得データを格納するので、メモリオーバーフローに注意
+        :param sql: string 実行SQL文
+        :param params: tuple 実行SQL文のパラメータ値(default:None)
+        :param is_cursor_close: カーソルをcloseするか(default:True)
+        :return tuple SQL実行結果
+        """
+        # SQL文を実行
+        self.__query(sql, params)
+        records = self.get_cursor().fatchAll()
+        if is_cursor_close:
+            self.cursor_close()
+        return records
+
+    def select_one(self, sql, params=None, is_cursor_close=True):
+        """ DB select sqlを実行し、一行目を返す
+        :param sql: string 実行SQL文
+        :param params: tuple 実行SQL文のパラメータ値(default:None)
+        :param is_cursor_close: カーソルをcloseするか(default:True)
+        :return tuple SQL実行結果
+        """
+        # SQL文を実行
+        self.__query(sql, params)
+        record = self.get_cursor().fatchOne()
+        if is_cursor_close:
+            self.cursor_close()
+        return record
+
+    def execute(self, sql, params=None):
+        """ SQLを実行し、追加/変更したAUTOINCREMENTカラムの値を返す
+        :param sql: string 実行SQL文
+        :param params: tuple 実行SQL文のパラメータ値(default:None)
+        :return mixed SQL実行結果
+        """
+        # SQL文を実行
+        self.__query(sql, params)
+        return self.get_cursor().lastrowid()
+
+    def begin(self):
+        """ DB トランザクションを貼る
+        """
+        self.__connect.start_transaction()
+
+    def rollback(self):
+        """ DB ロールバック
+        """
+        self.__connect.rollback()
+
+    def commit(self):
+        """ DB コミット
+        """
+        self.__connect.commit()
+
+    def __query(self, sql, params):
+        """ DB sqlを実行
+        :param sql: 実行SQL文
+        """
+        cursor = self.get_cursor(prepared=True)
+        cursor.execute(sql, params)
