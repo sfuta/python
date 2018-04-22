@@ -13,6 +13,7 @@ class TestConfigure(unittest.TestCase):
         """ test get
         """
         self.assertEqual("test value", Configure.get("test.a.b"))
+        self.assertTrue(Configure.get("test.a.e"))
 
 if __name__=='__main__':
     unittest.main()
