@@ -2,45 +2,37 @@
 
 """
 Api操作用クラス
-with構文対応
-※実装参考
-https://qiita.com/hoto17296/items/8fcf55cc6cd823a18217
+※サンプルURL:https://jsonplaceholder.typicode.com/
 """
+
 import json
-import urllib.request
+import urllib
+import urllib2
 
 class Client(object):
 
-    def __init__(self):
+    def __init__(self, url):
         """ Api接続情報の読み込みを実行
+        :param url: string 接続先URL
         """
-        self.processes = processes
+        self.__url = url
 
-    def __enter__(self):
-        """ Api接続open処理
-        """
-        return self
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        """ Api接続close処理
-        """
-
-    def open(self, name):
+    def get(self, params={}):
         """ Api接続を実行
-
-        :param name: string 接続先名称
-        :return 接続オブジェクト
+        :param params: dict 接続先のパラメータ
+        :return string response文字列
         """
+        querystring = ("?" if params != {} else "") + urllib.urlencode(params)
+        try:
+            response = urllib2.urlopen(self.__url + querystring)
+            return response.read()
+        except urllib2.HTTPError as e:
+            # @TODO エラー処理の記載
+            print 'Error code: ', e.code
+        except urllib2.URLError as e:
+            # @TODO エラー処理の記載
+            print 'Reason: ', e.reason
 
-    def close(self):
-        """ Api接続を終了
-        """
-
-    def get(self, params=None):
-        """ Api requestを投げ結果の取得を実行
-
-        :param params: hash APIのパラメータを指定
-        :return list api実行結果(json decodeした値)
-        """
-
-        return None
+# if __name__ == '__main__':
+#     c = Client('https://jsonplaceholder.typicode.com/posts')
+#     print c.get({'userId':2})
