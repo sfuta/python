@@ -23,6 +23,7 @@ def main(argv):
         # 最大10回子プロセス起動
         while len(multi.active_children()) < 3:
             p = multi.Process(name='worker', target=call_process)
+            p.daemon = True
             p.start()
             # 次のプロセス作成前に0.1秒待ち
             time.sleep(0.1)
