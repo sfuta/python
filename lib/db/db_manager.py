@@ -31,8 +31,8 @@ class DbManager(object):
         self.cursor_close()
         self.__connect.close()
 
-    def get_cursor(self):
-        """ カーソルを取得(ないときは新たに作成)
+    def load_cursor(self):
+        """ カーソルをロード(無い時は新たに作成)
         """
         if self.__cursor is None:
             self.__cursor = self.__connect.cursor(prepared=True)
@@ -55,7 +55,7 @@ class DbManager(object):
         """
         # SQL文を実行
         self.__query(sql, params)
-        records = self.get_cursor().fatchAll()
+        records = self.load_cursor().fatchAll()
         if is_cursor_close:
             self.cursor_close()
         return records
@@ -69,7 +69,7 @@ class DbManager(object):
         """
         # SQL文を実行
         self.__query(sql, params)
-        record = self.get_cursor().fatchOne()
+        record = self.load_cursor().fatchOne()
         if is_cursor_close:
             self.cursor_close()
         return record
@@ -82,7 +82,7 @@ class DbManager(object):
         """
         # SQL文を実行
         self.__query(sql, params)
-        return self.get_cursor().lastrowid()
+        return self.load_cursor().lastrowid()
 
     def begin(self):
         """ DB トランザクションを貼る
@@ -103,5 +103,5 @@ class DbManager(object):
         """ DB sqlを実行
         :param sql: 実行SQL文
         """
-        cursor = self.get_cursor(prepared=True)
-        cursor.execute(sql, params)
+        self.load_cursor(prepared=True)
+        self.__cursor.execute(sql, params)
