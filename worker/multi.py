@@ -37,17 +37,17 @@ def main(argv):
         """
         try:
             p = subprocess.Popen(argv[1:])
-            mylogger.info("Start={}".format(p.pid))
+            mylogger.info("Subprocess Start={}".format(p.pid))
             p.wait()
         except:
-            mylogger.info("Terminate={}".format(p.pid))
+            mylogger.info("Child Terminate={}".format(p.pid))
             p.terminate()
 
-        def handler(signum, frame):
-            mylogger.info("Terminate={}".format(p.pid))
-            p.terminate()
-
-        signal.signal(signal.SIGTERM, handler)
+        # def handler(signum, frame):
+        #     mylogger.info("Terminate={}".format(p.pid))
+        #     p.terminate()
+        #
+        # signal.signal(signal.SIGTERM, handler)
 
     try:
         while True:
@@ -57,7 +57,7 @@ def main(argv):
                 # 親プロセスが死んだら,子プロセスも死ぬようにする
                 # p.daemon = True
                 p.start()
-                mylogger.info("make process {}".format(p.pid))
+                mylogger.info("Make Process {}".format(p.pid))
                 # 次のプロセス作成前に0.1秒待ち
                 time.sleep(0.1)
 
@@ -65,7 +65,7 @@ def main(argv):
             time.sleep(1)
     except:
         for p in multi.active_children():
-            mylogger.info("Terminate={}".format(p.pid))
+            mylogger.info("Parent Terminate={}".format(p.pid))
             p.terminate()
 
 if __name__ == '__main__':
